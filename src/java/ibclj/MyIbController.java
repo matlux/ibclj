@@ -59,7 +59,7 @@ public class MyIbController implements ApiController.IConnectionHandler {
     }
 
     public void connect(String host, int port, int clientId){
-        controller.connect(host, port, clientId,"");
+        controller.connect(host, port, clientId);
     }
 
     public void disconnect() {
