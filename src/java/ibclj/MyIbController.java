@@ -59,7 +59,7 @@ public class MyIbController implements ApiController.IConnectionHandler {
     }
 
     public void connect(String host, int port, int clientId){
-        controller.connect(host, port, clientId);
+        controller.connect(host, port, clientId,"");
     }
 
     public void disconnect() {
@@ -150,7 +150,7 @@ public class MyIbController implements ApiController.IConnectionHandler {
 
     public static void main(String[] args){
         MyIbController c = new MyIbController();
-        c.connect("localhost", 7496, 5);
+        c.connect("localhost", 7497, 5);
 
         NewContract contract = c.createContract();
         DataRow row = c.new DataRow();
