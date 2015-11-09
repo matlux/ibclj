@@ -104,16 +104,16 @@ public class MyIbController implements ApiController.IConnectionHandler {
         @Override public void tickPrice( NewTickType tickType, double price, int canAutoExecute) {
             switch( tickType) {
                 case BID:
-//                    System.out.println("Bid: " + price);
+                    System.out.println("Bid: " + price);
                     break;
                 case ASK:
-//                    System.out.println("Ask: " + price);
+                    System.out.println("Ask: " + price);
                     break;
                 case LAST:
                     System.out.println("Last " + price);
                     break;
                 case CLOSE:
-//                    System.out.println("Close " + price);
+                    System.out.println("Close " + price);
                     break;
             }
         }
@@ -121,10 +121,10 @@ public class MyIbController implements ApiController.IConnectionHandler {
         @Override public void tickSize( NewTickType tickType, int size) {
             switch( tickType) {
                 case BID_SIZE:
-//                    System.out.println("BidSize: " + size);
+                    System.out.println("BidSize: " + size);
                     break;
                 case ASK_SIZE:
-//                    System.out.println("AskSize: " + size);
+                    System.out.println("AskSize: " + size);
                     break;
                 case VOLUME:
                     System.out.println("Volume: " + size);
@@ -150,7 +150,7 @@ public class MyIbController implements ApiController.IConnectionHandler {
 
     public static void main(String[] args){
         MyIbController c = new MyIbController();
-        c.connect("localhost", 7497, 5);
+        c.connect("localhost", 7496, 5);
 
         NewContract contract = c.createContract();
         DataRow row = c.new DataRow();
