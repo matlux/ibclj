@@ -149,6 +149,7 @@ public class MyIbController implements ApiController.IConnectionHandler {
 
 
     public static void main(String[] args){
+        System.out.println("starting...");
         MyIbController c = new MyIbController();
         c.connect("localhost", 7497, 5);
 
