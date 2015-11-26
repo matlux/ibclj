@@ -75,31 +75,41 @@
 (defn unsubscribe! [api ctx]
   (.cancelTopMktData api (:row ctx)))
 
+
+(def api (api-ctrl))
+(def cvxx (chan))
+(def stop-chan (chan))
+(def vxx-ctx (contract-ctx cvxx "VXX" com.ib.controller.Types$SecType/STK))
+
 (defn start []
-  (let [api (api-ctrl)
-        c (chan)
-        vxx-ctx (contract-ctx c "VXX" com.ib.controller.Types$SecType/STK)
-        spy-ctx (contract-ctx c "SPY" com.ib.controller.Types$SecType/STK)
+  (let [;;api (api-ctrl)
+        ;;cvxx (chan)
+        ;cspy (chan)
+        ;vxx-ctx (contract-ctx cvxx "VXX" com.ib.controller.Types$SecType/STK)
+        ;spy-ctx (contract-ctx cspy "SPY" com.ib.controller.Types$SecType/STK)
 ]
     (.connect api "localhost" 7497 5)
 
-    (subscribe! api vxx-ctx c)
-    (subscribe! api spy-ctx c)
+    (subscribe! api vxx-ctx cvxx)
+    ;(subscribe! api spy-ctx cspy)
 
     (go-loop []
-      (let [{:keys [sym] :as msg} (<! c)]
-        (println msg)
-        (if (= sym "VXX")
-          (println "********VXX")
-          (println "********SPY"))
-        (recur)))
+      (let [[{:keys [sym type] :as msg} _] (alts! [cvxx stop-chan])]
+        (if (= type "LAST") (println "***" msg) (println msg))
+
+        (if msg (recur))))
 
     (Thread/sleep 100000)
 
     (unsubscribe! api vxx-ctx)
-    (unsubscribe! api spy-ctx)
+    ;(unsubscribe! api spy-ctx)
 
     (.disconnect api)))
+
+(comment
+
+  (close! stop-chan)
+  )
 
 
 (defn -main
@@ -108,4 +118,4 @@
   (start))
 
 
-(start)
+;(start)
