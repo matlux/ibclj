@@ -47,16 +47,16 @@
   (reify
     com.ib.controller.ApiController$ITopMktDataHandler
     (tickPrice [this tick-type p auto-execute?]
-      (println (.name tick-type) "price: " p)
-      (>!! c {:sym (.symbol contract) :type (.name tick-type) :price p})
+      ;;(println (.name tick-type) "price: " p)
+      (>!! c {:sym (.symbol contract) :type (.name tick-type) :value p})
       )
     (tickSize [this tick-type size]
-      (println (.name tick-type) "size: " size)
-      (>!! c {:sym (.symbol contract) :type (.name tick-type) :size size})
+      ;;(println (.name tick-type) "size: " size)
+      (>!! c {:sym (.symbol contract) :type (.name tick-type) :value size})
       )
     (tickString [this tick-type val]
       ;(println (.name tick-type) "LastTime: " val)
-      (>!! c {:sym (.symbol contract) :type (.name tick-type) :val val})
+      (>!! c {:sym (.symbol contract) :type (.name tick-type) :value val})
       )
     (marketDataType [this data-type]
       (println "Frozen? " (= data-type com.ib.controller.Types$MktDataType/Frozen)))
@@ -85,8 +85,10 @@
 (defn stop-api! [api]
   (.disconnect api))
 
+(def tick-channel (chan))
+
 (defn add! [api contract-def]
-  (let [c (chan)
+  (let [c tick-channel
         contract-ctx (contract-ctx c contract-def)]
     (subscribe! api contract-ctx c)
     contract-ctx
@@ -118,9 +120,9 @@
     (println "about to go-loop " c)
 
     (go-loop []
-      (let [[{:keys [sym type] :as msg} _] (alts! [c stop-chan])]
-        (println "foobar")
-        (if (= type "LAST") (println "***" msg) (println msg))
+      (let [[{:keys [sym type] :as msg} _] (alts! [tick-channel stop-chan])]
+        ;;(println "foobar")
+        (if (= type "LAST_TIMESTAMP") (println "***" msg) (println msg))
         (if msg (recur))))
 
     ;(Thread/sleep 100000)
@@ -135,6 +137,16 @@
 (comment
 
   (start)
+
+
+  (def c )
+  (:chan (add! api {:symbol "SPY" :type com.ib.controller.Types$SecType/STK}))
+  (:chan (add! api {:symbol "AAPL" :type com.ib.controller.Types$SecType/STK}))
+  (:chan (add! api {:symbol "GOOG" :type com.ib.controller.Types$SecType/STK}))
+
+
+
+
   (close! stop-chan)
   (stop-api! api)
   )
@@ -145,5 +157,5 @@
   []
   (start))
 
-
+(println "ibclj evaluated")
 ;(start)
